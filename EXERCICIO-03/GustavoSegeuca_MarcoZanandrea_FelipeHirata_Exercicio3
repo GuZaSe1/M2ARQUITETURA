@@ -1,0 +1,118 @@
+# Disciplina: Arquitetura e Organizacao de Processadores
+# Atividade: Avaliação 01 – Programacao em Linguagem de Montagem
+# Programa 03
+# Grupo: Gustavo Segeuca, Marco Zanandrea e Felipe Hirata
+
+.data
+vetor:
+    .word 0, 1, 2, 3, 4     # vetor com os valores de 0 a 4
+    
+msg_soma: .asciz "Soma = "       # mensagem antes do valor da soma
+
+msg_elementos: .asciz "Elementos do vetor:\n" 	# título antes de imprimir os elementos
+
+
+.text
+.globl main
+
+jal zero, main		# desvia para main ao iniciar
+
+fatorial:
+	addi t0, zero, 1 	#int i=1
+	addi t1, zero, 1 	#int f=1 (acumulador)
+
+while:
+	blt a0, t0, fim_while 	 # enquanto (i <= a0), faz{
+	mul t1, t1, t0		 # f *= i
+	addi t0, t0, 1		 # i++ }
+	jal zero, while		 # volta pro loop
+
+fim_while:
+	add a0, zero, t1	# retorna f em a0
+	jalr zero, ra, 0 	# return 
+
+arranjo:	# (n = a0, k = a1) => retorna A(n, k) = n! / (n-k)!
+	#empilha registradores
+	addi sp, sp, -12 
+	sw ra, 0(sp)	 
+	sw s0, 4(sp)
+	sw s1, 8(sp)	 
+
+	add s0, zero, a0 	#s0 = n 
+	sub s1, a0, a1   	#s1 = n-k
+
+	jal ra, fatorial	# calcula fatorial(n)
+	add s0, zero, a0 	# guarda fatorial(n) em s0
+
+	add a0, zero, s1 	# a0 = n - k
+	jal ra, fatorial	# calcula fatorial(n - k)
+	add s1, zero, a0 	# guarda fatorial(n-k) em s1
+	
+	div a0, s0, s1		# a0 = s0 / s1 => arranjo
+
+	#desempilha e retorna
+	lw ra, 0(sp)	 
+	lw s0, 4(sp)	
+	lw s1, 8(sp)	  
+	addi sp, sp, 12
+	jalr zero, ra, 0 
+
+main:	# funcao principal
+	# imprime "Elementos do vetor:"
+	la a0, msg_elementos	# puxa funcao "msg_elementos"
+	addi a7, zero, 4        # syscall imprimir string
+	ecall
+
+	# loop: imprimir os elementos do vetor
+	la   t0, vetor		# t0 = endereço base do vetor
+	addi t1, zero, 0	# t1 = índice i = 0
+	addi t2, zero, 5	# t2 = tamanho do vetor = 5
+
+print_loop:
+	beq  t1, t2, fim_print		# se i == 5, fim
+	slli t3, t1, 2			# t3 = i * 4 (offset em bytes)
+	add  t4, t0, t3			# t4 = endereco de vetor[i]
+	lw   a0, 0(t4)			# carrega vetor[i] em a0
+	addi a7, zero, 1		# syscall imprimir inteiro
+	ecall
+
+	addi a0, zero, 10		# imprime em outra linha
+	addi a7, zero, 11
+	ecall
+
+	addi t1, t1, 1
+	jal zero, print_loop
+
+fim_print:
+	# soma os elementos do vetor
+	la   t0, vetor		# t0 = endereço do vetor
+	addi t1, zero, 0	# t1 = índice i
+	addi t2, zero, 5	# t2 = tamanho
+	addi t3, zero, 0	# t3 = acumulador da soma
+
+soma_loop:
+	beq  t1, t2, fim_soma	# se i == 5, fim
+	slli t4, t1, 2		# t4 = i * 4
+	add  t5, t0, t4		# t5 = endereço de vetor[i]
+	lw   t6, 0(t5)		# t6 = vetor[i]
+	add  t3, t3, t6		# soma parcial: soma += vetor[i]
+	addi t1, t1, 1		# i++
+	jal  zero, soma_loop
+
+fim_soma:
+	# imprime "Soma = "
+	la   a0, msg_soma
+	addi a7, zero, 4
+	ecall
+
+	add  a0, zero, t3
+	addi a7, zero, 1	# syscall imprimir string
+	ecall
+
+	addi a0, zero, 10	# imprime em outra linha
+	addi a7, zero, 11	# syscall imprimir inteiro
+	ecall
+
+	# finaliza o programa
+	addi a7, zero, 10
+	ecall
