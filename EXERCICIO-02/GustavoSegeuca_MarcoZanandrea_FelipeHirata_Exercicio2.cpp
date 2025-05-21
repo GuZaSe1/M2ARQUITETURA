@@ -4,7 +4,7 @@ using namespace std;
 // Funcao que verifica se o numero eh primo
 int numeroPrimo(int n) {
     if (n <= 1)
-        return 0; // Não é primo
+        return 0; // Nao eh primo
 
     for (int i = 2; i * i <= n; i++) {
         if (n % i == 0)
