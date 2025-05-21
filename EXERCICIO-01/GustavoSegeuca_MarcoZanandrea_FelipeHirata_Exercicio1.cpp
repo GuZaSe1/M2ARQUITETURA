@@ -12,7 +12,7 @@ int numeroPrimo(int n) {
             return 0; // Encontrou divisor, não eh primo
     }
 
-    return 1; // Número é primo
+    return 1; // Numero eh primo
 }
 
 int main() {
