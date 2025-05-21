@@ -1,20 +1,20 @@
 #include <iostream>
 using namespace std;
 
-// Função que verifica se o número é primo
+// Funcao que verifica se o numero eh primo
 int numeroPrimo(int n) {
     if (n <= 1)
         return 0; // Não é primo
 
     for (int i = 2; i * i <= n; i++) {
         if (n % i == 0)
-            return 0; // Encontrou divisor, não é primo
+            return 0; // Encontrou divisor, nao eh primo
     }
 
-    return 1; // Número é primo
+    return 1; // Numero eh primo
 }
 
-// Função que imprime os 10 primeiros primos depois de 100
+// Funcao que imprime os 10 primeiros primos depois de 100
 void imprimir10Primos() {
     int contador = 0;
     int numero = 100;
