@@ -49,29 +49,29 @@ numeroPrimo:
     sw t0, 4(sp)
     sw t1, 8(sp)
 
-    # Verifica se o número <= 1 (não primo)
+    # Verifica se o número <= 1 (nao primo)
     addi t0, zero, 1
     ble a0, t0, naoPrimo
 
-    # Inicia o loop de verificação de primo
+    # Inicia o loop de verificacao de primo
     addi t0, zero, 2        # i = 2
     
 loopPrimo:
     mul t1, t0, t0          # calcula i*i
-    bgt t1, a0, ePrimo      # se i*i > número, e não encontrou nenhum divisor, é primo	
+    bgt t1, a0, ePrimo      # se i*i > numero, e nao encontrou nenhum divisor, eh primo	
 
-    rem s0, a0, t0          # resto da divisão entre a0(num. original) e t0(i atual)
+    rem s0, a0, t0          # resto da divisao entre a0(num. original) e t0(i atual)
     beq s0, zero, naoPrimo  # resto zero = não primo
 
     addi t0, t0, 1          # incrementa i
     j loopPrimo             # repete loop
 
 ePrimo:
-    addi a0, zero, 1        # põe 1 em a0 p/ retornar que é primo
+    addi a0, zero, 1        # poe 1 em a0 p/ retornar que eh primo
     j fimPrimo              # pula p/ fimPrimo
 
 naoPrimo:
-    addi a0, zero, 0        # põe 0 em a0 p/ retornar que não é primo
+    addi a0, zero, 0        # poe 0 em a0 p/ retornar que não eh primo
 
 fimPrimo:
     lw s0, 0(sp)            # recupera registradores salvos*
